@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="estudiante">
+        <createTable tableName="productos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo" type="VARCHAR(100)"/>
+            <column name="descripcion" type="VARCHAR(255)"/>
+            <column name="precio" type="INT"/>
+            <column name="stock" type="INT"/>
+            <column name="metros" type="DECIMAL(10,2)"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="2" author="estudiante">
+        <insert tableName="productos"><column name="nombre" value="Seda Natural"/><column name="tipo" value="Seda"/><column name="descripcion" value="Seda pura de alta calidad"/><column name="precio" value="15000"/><column name="stock" value="10"/><column name="metros" value="5.5"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Algodón Orgánico"/><column name="tipo" value="Algodón"/><column name="descripcion" value="Algodón 100% orgánico transpirable"/><column name="precio" value="5000"/><column name="stock" value="50"/><column name="metros" value="10.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Lino Italiano"/><column name="tipo" value="Lino"/><column name="descripcion" value="Lino fresco ideal para verano"/><column name="precio" value="8500"/><column name="stock" value="30"/><column name="metros" value="8.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Terciopelo Premium"/><column name="tipo" value="Terciopelo"/><column name="descripcion" value="Terciopelo suave y elegante"/><column name="precio" value="12000"/><column name="stock" value="20"/><column name="metros" value="4.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Poliéster Estampado"/><column name="tipo" value="Poliéster"/><column name="descripcion" value="Tela sintética con estampado floral"/><column name="precio" value="3500"/><column name="stock" value="100"/><column name="metros" value="20.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Denim Clásico"/><column name="tipo" value="Mezclilla"/><column name="descripcion" value="Mezclilla resistente para jeans"/><column name="precio" value="7000"/><column name="stock" value="15"/><column name="metros" value="15.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Lana de Oveja"/><column name="tipo" value="Lana"/><column name="descripcion" value="Lana gruesa para abrigos"/><column name="precio" value="9000"/><column name="stock" value="40"/><column name="metros" value="6.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Satén Brillante"/><column name="tipo" value="Satén"/><column name="descripcion" value="Satén suave con acabado brillante"/><column name="precio" value="6500"/><column name="stock" value="25"/><column name="metros" value="12.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Franela a Cuadros"/><column name="tipo" value="Franela"/><column name="descripcion" value="Franela cálida diseño tartán"/><column name="precio" value="4800"/><column name="stock" value="35"/><column name="metros" value="10.0"/></insert>
+        <insert tableName="productos"><column name="nombre" value="Tul Transparente"/><column name="tipo" value="Tul"/><column name="descripcion" value="Tul ligero para decoración y faldas"/><column name="precio" value="2500"/><column name="stock" value="200"/><column name="metros" value="50.0"/></insert>
+    </changeSet>
+
+</databaseChangeLog>

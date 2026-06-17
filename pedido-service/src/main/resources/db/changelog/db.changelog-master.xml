@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="1" author="proyecto_tienda">
+        <createTable tableName="pedido">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="producto_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cantidad" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="precio_unitario" type="int"/>
+            <column name="total_pedido" type="int"/>
+            <column name="fecha_pedido" type="datetime"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260520-01-carrito" author="proyecto_tienda">
+        <createTable tableName="carrito_items">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="usuario_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="producto_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cantidad" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="precio_unitario" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="seleccionado" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="proyecto_tienda">
+        <addColumn tableName="carrito_items">
+            <column name="pedido_id" type="int"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="carrito_items" baseColumnNames="pedido_id" constraintName="fk_carrito_pedido" referencedTableName="pedido" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="3" author="proyecto_tienda">
+        <insert tableName="pedido">
+            <column name="producto_id" value="1"/>
+            <column name="cantidad" value="2"/>
+            <column name="precio_unitario" value="1000"/>
+            <column name="total_pedido" value="2000"/>
+            <column name="fecha_pedido" valueDate="2026-05-20T10:00:00"/>
+        </insert>
+        <insert tableName="pedido"><column name="producto_id" value="2"/><column name="cantidad" value="1"/><column name="precio_unitario" value="1500"/><column name="total_pedido" value="1500"/><column name="fecha_pedido" valueDate="2026-05-20T11:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="3"/><column name="cantidad" value="4"/><column name="precio_unitario" value="500"/><column name="total_pedido" value="2000"/><column name="fecha_pedido" valueDate="2026-05-20T12:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="4"/><column name="cantidad" value="1"/><column name="precio_unitario" value="5000"/><column name="total_pedido" value="5000"/><column name="fecha_pedido" valueDate="2026-05-20T13:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="5"/><column name="cantidad" value="2"/><column name="precio_unitario" value="1200"/><column name="total_pedido" value="2400"/><column name="fecha_pedido" valueDate="2026-05-20T14:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="6"/><column name="cantidad" value="1"/><column name="precio_unitario" value="3000"/><column name="total_pedido" value="3000"/><column name="fecha_pedido" valueDate="2026-05-20T15:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="7"/><column name="cantidad" value="3"/><column name="precio_unitario" value="800"/><column name="total_pedido" value="2400"/><column name="fecha_pedido" valueDate="2026-05-20T16:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="8"/><column name="cantidad" value="1"/><column name="precio_unitario" value="10000"/><column name="total_pedido" value="10000"/><column name="fecha_pedido" valueDate="2026-05-20T17:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="9"/><column name="cantidad" value="5"/><column name="precio_unitario" value="200"/><column name="total_pedido" value="1000"/><column name="fecha_pedido" valueDate="2026-05-20T18:00:00"/></insert>
+        <insert tableName="pedido"><column name="producto_id" value="10"/><column name="cantidad" value="2"/><column name="precio_unitario" value="1500"/><column name="total_pedido" value="3000"/><column name="fecha_pedido" valueDate="2026-05-20T19:00:00"/></insert>
+
+        <insert tableName="carrito_items"><column name="usuario_id" value="1"/><column name="producto_id" value="1"/><column name="cantidad" value="2"/><column name="precio_unitario" value="1000"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="1"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="2"/><column name="producto_id" value="2"/><column name="cantidad" value="1"/><column name="precio_unitario" value="1500"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="2"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="3"/><column name="producto_id" value="3"/><column name="cantidad" value="4"/><column name="precio_unitario" value="500"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="3"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="4"/><column name="producto_id" value="4"/><column name="cantidad" value="1"/><column name="precio_unitario" value="5000"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="4"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="5"/><column name="producto_id" value="5"/><column name="cantidad" value="2"/><column name="precio_unitario" value="1200"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="5"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="6"/><column name="producto_id" value="6"/><column name="cantidad" value="1"/><column name="precio_unitario" value="3000"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="6"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="7"/><column name="producto_id" value="7"/><column name="cantidad" value="3"/><column name="precio_unitario" value="800"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="7"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="8"/><column name="producto_id" value="8"/><column name="cantidad" value="1"/><column name="precio_unitario" value="10000"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="8"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="9"/><column name="producto_id" value="9"/><column name="cantidad" value="5"/><column name="precio_unitario" value="200"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="9"/></insert>
+        <insert tableName="carrito_items"><column name="usuario_id" value="10"/><column name="producto_id" value="10"/><column name="cantidad" value="2"/><column name="precio_unitario" value="1500"/><column name="seleccionado" valueBoolean="true"/><column name="pedido_id" value="10"/></insert>
+    </changeSet>
+
+</databaseChangeLog>

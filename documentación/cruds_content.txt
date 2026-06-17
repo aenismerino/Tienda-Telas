@@ -1,0 +1,86 @@
+Para 0: 1. 🔐 Auth Service (Puerto: 8081)
+Para 1: Maneja la autenticación y los usuarios. Base URL: http://localhost:8081/auth
+Para 2: Registrar un Usuario: POST /register
+Para 3: Body (JSON):
+Para 4: 
+Para 5: Login: POST /login
+Para 6: Body (JSON):
+Para 7: 
+Para 8: Listar Usuarios: GET /users
+Para 9: Obtener Usuario por RUT: GET /users/12345678-9
+Para 10: Actualizar Usuario: PUT /users/12345678-9 (Usa el mismo JSON de registro).
+Para 11: Eliminar Usuario: DELETE /users/12345678-9
+Para 12: 
+Para 13: 
+Para 14: 
+Para 15: 
+Para 16: 
+Para 17: 
+Para 18: 2. 📦 Inventario Service (Puerto: 8083)
+Para 19: Maneja el catálogo de productos. Base URL: http://localhost:8083/productos
+Para 20: Crear Producto: POST /
+Para 21: Body (JSON):
+Para 22: 
+Para 23: Listar Productos: GET /
+Para 24: Obtener Producto por ID: GET /1
+Para 25: Actualizar Producto: PUT /1 (Usa el mismo JSON de creación con los datos nuevos).
+Para 26: Eliminar Producto: DELETE /1
+Para 27: 
+Para 28: 3. 🛒 Pedido & Carrito Service (Puerto: 8085)
+Para 29: Este servicio maneja dos controladores distintos: Carrito y Pedido.
+Para 30: A. Carrito (Base URL: http://localhost:8085/carrito )
+Para 31: Obtener Carrito por Usuario: GET /usuario/1 (donde 1 es el ID de usuario)
+Para 32: Agregar al Carrito: POST /agregar
+Para 33: Body (JSON):
+Para 34: 
+Para 35: Cambiar Selección de Item: PATCH /seleccionar/1?estado=false (donde 1 es el itemId)
+Para 36: Actualizar Cantidad de Item: PUT /actualizar-cantidad/1?cantidad=5
+Para 37: Eliminar Item: DELETE /eliminar/1
+Para 38: B. Pedidos (Base URL: http://localhost:8085/pedidos )
+Para 39: Crear Pedido: POST /crear
+Para 40: Body (JSON):
+Para 41: 
+Para 42: Listar Pedidos: GET /
+Para 43: Obtener Pedido por ID: GET /1
+Para 44: Actualizar Estado: PUT /1/estado?estado=EN_PROCESO
+Para 45: Eliminar Pedido: DELETE /1
+Para 46: 
+Para 47: 
+Para 48: 
+Para 49: 
+Para 50: 
+Para 51: 
+Para 52: 
+Para 53: 
+Para 54: 
+Para 55: 
+Para 56: 
+Para 57: 
+Para 58: 4. 💳 Pago Service (Puerto: 8084)
+Para 59: Maneja los pagos de las órdenes (pedidos). Base URL: http://localhost:8084/payments
+Para 60: Registrar un Pago: POST /
+Para 61: Body (JSON):
+Para 62: 
+Para 63: Listar Pagos: GET /
+Para 64: Obtener Pago por ID: GET /1
+Para 65: Actualizar Pago: PUT /1 (Mismo cuerpo que al registrar).
+Para 66: Eliminar Pago: DELETE /1
+Para 67: 
+Para 68: 5. 🚚 Envíos Service (Puerto: 8082)
+Para 69: Maneja la logística y el seguimiento de las órdenes. Base URL: http://localhost:8082/shipments
+Para 70: Crear un Envío: POST /
+Para 71: Body (JSON):
+Para 72: 
+Para 73: Listar Envíos: GET /
+Para 74: Obtener Envío por ID: GET /1
+Para 75: Buscar Envíos por RUT: GET /buscar-rut/12345678-9
+Para 76: Actualizar Tracking (Historial de Estados): PUT /1/tracking
+Para 77: Body (JSON):
+Para 78: 
+Para 79: Obtener Totales por Estado: GET /totales-estado
+Para 80: Eliminar Envío: DELETE /1
+Para 81: 
+
+
+--- TABLES ---
+

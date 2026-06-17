@@ -1,0 +1,11 @@
+package com.envio_service.envio_service.DTO;
+
+import lombok.Data;
+
+@Data
+public class ShipmentDTO {
+
+    private Long orderId;
+    private String direccionDestino;
+
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="joako">
+        <createTable tableName="roles">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nombre" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="users">
+            <column name="rut" type="varchar(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nombres" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="apellidos" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correo" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="telefono" type="varchar(20)"/>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="role_id"
+                                 constraintName="fk_user_role"
+                                 referencedTableName="roles" referencedColumnNames="id"/>
+
+        <insert tableName="roles"><column name="nombre" value="ROLE_USER"/></insert>
+        <insert tableName="roles"><column name="nombre" value="ROLE_ADMIN"/></insert>
+    </changeSet>
+
+    <changeSet id="2" author="joako">
+        <insert tableName="users"><column name="rut" value="11111111-1"/><column name="nombres" value="Juan"/><column name="apellidos" value="Perez"/><column name="correo" value="juan@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="22222222-2"/><column name="nombres" value="Maria"/><column name="apellidos" value="Gomez"/><column name="correo" value="maria@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="33333333-3"/><column name="nombres" value="Pedro"/><column name="apellidos" value="Diaz"/><column name="correo" value="pedro@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="44444444-4"/><column name="nombres" value="Luis"/><column name="apellidos" value="Soto"/><column name="correo" value="luis@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="55555555-5"/><column name="nombres" value="Ana"/><column name="apellidos" value="Ruiz"/><column name="correo" value="ana@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="66666666-6"/><column name="nombres" value="Jose"/><column name="apellidos" value="Lara"/><column name="correo" value="jose@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="77777777-7"/><column name="nombres" value="Rosa"/><column name="apellidos" value="Mena"/><column name="correo" value="rosa@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="88888888-8"/><column name="nombres" value="Raul"/><column name="apellidos" value="Vera"/><column name="correo" value="raul@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="99999999-9"/><column name="nombres" value="Sara"/><column name="apellidos" value="Pino"/><column name="correo" value="sara@test.com"/><column name="telefono" value="12345678"/><column name="password" value="123456"/><column name="role_id" value="1"/></insert>
+        <insert tableName="users"><column name="rut" value="10101010-0"/><column name="nombres" value="Admin"/><column name="apellidos" value="Admin"/><column name="correo" value="admin@test.com"/><column name="telefono" value="12345678"/><column name="password" value="admin"/><column name="role_id" value="2"/></insert>
+    </changeSet>
+
+</databaseChangeLog>
