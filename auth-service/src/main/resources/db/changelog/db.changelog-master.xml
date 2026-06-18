@@ -58,4 +58,29 @@
         <insert tableName="users"><column name="rut" value="10101010-0"/><column name="nombres" value="Admin"/><column name="apellidos" value="Admin"/><column name="correo" value="admin@test.com"/><column name="telefono" value="12345678"/><column name="password" value="admin"/><column name="role_id" value="2"/></insert>
     </changeSet>
 
+    <changeSet id="3" author="joako">
+        <!-- Renombrar ROLE_USER a ROLE_COMPRADOR -->
+        <update tableName="roles">
+            <column name="nombre" value="ROLE_COMPRADOR"/>
+            <where>id = 1</where>
+        </update>
+        
+        <!-- Renombrar ROLE_ADMIN a ROLE_VENDEDOR -->
+        <update tableName="roles">
+            <column name="nombre" value="ROLE_VENDEDOR"/>
+            <where>id = 2</where>
+        </update>
+        
+        <!-- Insertar ROLE_ADMIN como nuevo rol (será ID 3) -->
+        <insert tableName="roles">
+            <column name="nombre" value="ROLE_ADMIN"/>
+        </insert>
+        
+        <!-- Actualizar al usuario Admin para que tenga el nuevo rol ROLE_ADMIN (ID 3) -->
+        <update tableName="users">
+            <column name="role_id" value="3"/>
+            <where>rut = '10101010-0'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

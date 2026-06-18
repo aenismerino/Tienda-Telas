@@ -1,0 +1,67 @@
+x-common-env: &common-env
+  SECRET: "esta_es_mi_compleja_clave_secreta"
+  DB_HOST: "host.docker.internal"
+
+services:
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *common-env
+      AUTH_URI: http://auth-service:8081
+      ENVIO_URI: http://envio-service:8082
+      INVENTARIO_URI: http://inventario:8083
+      PAGO_URI: http://pago-service:8084
+      PEDIDOS_URI: http://pedidos:8085
+      CARRITO_URI: http://carrito:8086
+    depends_on:
+      - auth-service
+      - carrito
+      - envio-service
+      - inventario
+      - pago-service
+      - pedidos
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      <<: *common-env
+
+  envio-service:
+    build: ./envio-service
+    ports:
+      - "8082:8082"
+    environment:
+      <<: *common-env
+
+  inventario:
+    build: ./inventario-service
+    ports:
+      - "8083:8083"
+    environment:
+      <<: *common-env
+
+  pago-service:
+    build: ./pago-service
+    ports:
+      - "8084:8084"
+    environment:
+      <<: *common-env
+
+  pedidos:
+    build: ./pedido-service
+    ports:
+      - "8085:8085"
+    environment:
+      <<: *common-env
+
+  carrito:
+    build: ./carrito-service
+    ports:
+      - "8086:8086"
+    environment:
+      <<: *common-env
