@@ -1,4 +1,4 @@
-package com.tienda.pedido.controller;
+package com.tienda.carrito.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tienda.pedido.dto.CarritoItemDTO;
-import com.tienda.pedido.dto.CarritoResponseDTO;
-import com.tienda.pedido.service.CarritoService;
+import com.tienda.carrito.dto.CarritoItemDTO;
+import com.tienda.carrito.dto.CarritoResponseDTO;
+import com.tienda.carrito.service.CarritoService;
 
 @RestController
 @RequestMapping("/carrito")
@@ -23,18 +23,15 @@ public class CarritoController {
     @Autowired
     private CarritoService carritoService;
 
-
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<CarritoResponseDTO> obtenerCarrito(@PathVariable Integer usuarioId) {
+    public ResponseEntity<CarritoResponseDTO> obtenerCarrito(@PathVariable String usuarioId) {
         return ResponseEntity.ok(carritoService.obtenerCarritoPorUsuario(usuarioId));
     }
-
 
     @PostMapping("/agregar")
     public ResponseEntity<CarritoItemDTO> agregarAlCarrito(@RequestBody CarritoItemDTO dto) {
         return ResponseEntity.ok(carritoService.agregarProducto(dto));
     }
-
 
     @PatchMapping("/seleccionar/{itemId}")
     public ResponseEntity<CarritoItemDTO> cambiarSeleccionItem(
@@ -50,10 +47,9 @@ public class CarritoController {
         return ResponseEntity.ok(carritoService.actualizarCantidad(itemId, cantidad));
     }
 
-
     @DeleteMapping("/eliminar/{itemId}")
     public ResponseEntity<Void> eliminarItem(@PathVariable Integer itemId) {
         carritoService.eliminarItemDelCarrito(itemId);
-        return ResponseEntity.noContent().build(); // Devuelve un estado 204 sin contenido (éxito)
+        return ResponseEntity.noContent().build();
     }
 }

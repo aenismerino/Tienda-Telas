@@ -1,4 +1,4 @@
-package com.tienda.pedido.service;
+package com.tienda.carrito.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,18 +6,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tienda.pedido.dto.CarritoItemDTO;
-import com.tienda.pedido.dto.CarritoResponseDTO;
-import com.tienda.pedido.model.CarritoItem;
-import com.tienda.pedido.repository.CarritoRepository;
+import com.tienda.carrito.dto.CarritoItemDTO;
+import com.tienda.carrito.dto.CarritoResponseDTO;
+import com.tienda.carrito.model.CarritoItem;
+import com.tienda.carrito.repository.CarritoRepository;
 
 @Service
 public class CarritoService {
     @Autowired
     private CarritoRepository carritoRepository;
 
- 
-    public CarritoResponseDTO obtenerCarritoPorUsuario(Integer usuarioId) {
+    public CarritoResponseDTO obtenerCarritoPorUsuario(String usuarioId) {
         List<CarritoItem> items = carritoRepository.findByUsuarioId(usuarioId);
         
         int totalCarrito = 0;
@@ -44,10 +43,8 @@ public class CarritoService {
         return respuesta;
     }
 
-    
     public CarritoItemDTO agregarProducto(CarritoItemDTO dto) {
         List<CarritoItem> carritoActual = carritoRepository.findByUsuarioId(dto.getUsuarioId());
-        
         
         Optional<CarritoItem> itemExistente = carritoActual.stream()
                 .filter(item -> item.getProductoId().equals(dto.getProductoId()))
@@ -59,7 +56,6 @@ public class CarritoService {
             itemAEditar = itemExistente.get();
             itemAEditar.setCantidad(itemAEditar.getCantidad() + dto.getCantidad());
         } else {
-
             itemAEditar = new CarritoItem();
             itemAEditar.setUsuarioId(dto.getUsuarioId());
             itemAEditar.setProductoId(dto.getProductoId());
@@ -72,7 +68,6 @@ public class CarritoService {
         return convertirADto(guardado);
     }
 
-    
     public CarritoItemDTO cambiarSeleccion(Integer itemId, Boolean seleccionado) {
         CarritoItem item = carritoRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item no encontrado en el carrito"));
@@ -82,7 +77,6 @@ public class CarritoService {
         return convertirADto(actualizado);
     }
 
-    
     private CarritoItemDTO convertirADto(CarritoItem item) {
         CarritoItemDTO dto = new CarritoItemDTO();
         dto.setId(item.getId());
@@ -101,7 +95,6 @@ public class CarritoService {
         CarritoItem actualizado = carritoRepository.save(item);
         return convertirADto(actualizado);
     }
-
 
     public void eliminarItemDelCarrito(Integer itemId) {
         if (!carritoRepository.existsById(itemId)) {

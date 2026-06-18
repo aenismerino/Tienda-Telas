@@ -1,11 +1,11 @@
-package com.tienda.pedido.dto;
+package com.tienda.carrito.dto;
 
 import lombok.Data;
 
 @Data
 public class CarritoItemDTO {
     private Integer id;
-    private Integer usuarioId;
+    private String usuarioId;
     private Integer productoId;
     private Integer cantidad;
     private Integer precioUnitario;

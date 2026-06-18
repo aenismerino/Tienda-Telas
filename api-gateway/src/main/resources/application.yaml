@@ -61,7 +61,7 @@ spring:
                 - StripPrefix=1
 
             - id: carrito
-              uri: http://localhost:8085
+              uri: http://localhost:8086
               predicates:
                 - Path=/api/carrito/**
               filters:

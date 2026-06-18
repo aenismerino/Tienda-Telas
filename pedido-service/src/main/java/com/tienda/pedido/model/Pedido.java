@@ -34,7 +34,4 @@ public class Pedido {
 
     }
 
-    @jakarta.persistence.OneToMany(mappedBy = "pedido", cascade = jakarta.persistence.CascadeType.ALL)
-    private java.util.List<CarritoItem> items;
-
 }

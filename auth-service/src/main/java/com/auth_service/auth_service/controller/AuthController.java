@@ -31,21 +31,68 @@ public class AuthController {
         
         return authService.buscarPorRut(rut)
                 .filter(u -> u.getPassword().equals(password))
-                .map(u -> ResponseEntity.ok(jwtUtil.generateToken(u.getRut())))
+                .map(u -> ResponseEntity.ok(jwtUtil.generateToken(u.getRut(), u.getRole().getNombre())))
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales invalidas"));
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> listarUsuarios(){
+    public ResponseEntity<?> listarUsuarios(){
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
+
+        if (role.equals("ROLE_COMPRADOR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acceso denegado para compradores");
+        }
+
         log.info("Obteniendo todos los usuarios");
-        return ResponseEntity.ok(authService.obtenerUsuarios());
+        List<User> users = authService.obtenerUsuarios();
+
+        if (role.equals("ROLE_ADMIN")) {
+            return ResponseEntity.ok(users);
+        } else if (role.equals("ROLE_VENDEDOR")) {
+            List<UserDTO> dtoList = users.stream().map(u -> {
+                UserDTO dto = new UserDTO();
+                dto.setRut(u.getRut());
+                dto.setNombres(u.getNombres());
+                dto.setApellidos(u.getApellidos());
+                dto.setCorreo(u.getCorreo());
+                dto.setTelefono(u.getTelefono());
+                dto.setPassword(null); // Ocultar contraseña
+                dto.setRoleId(u.getRole() != null ? u.getRole().getId() : null);
+                return dto;
+            }).toList();
+            return ResponseEntity.ok(dtoList);
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/users/{rut}")
-    public ResponseEntity<User> obtenerUsuarioPorRut(@PathVariable String rut){
+    public ResponseEntity<?> obtenerUsuarioPorRut(@PathVariable String rut){
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
+
+        if (role.equals("ROLE_COMPRADOR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acceso denegado para compradores");
+        }
+
         log.info("Buscando al usuario con RUT: {}", rut);
         return authService.buscarPorRut(rut)
-                .map(user -> ResponseEntity.ok(user))
+                .map(u -> {
+                    if (role.equals("ROLE_ADMIN")) {
+                        return ResponseEntity.ok(u);
+                    } else {
+                        UserDTO dto = new UserDTO();
+                        dto.setRut(u.getRut());
+                        dto.setNombres(u.getNombres());
+                        dto.setApellidos(u.getApellidos());
+                        dto.setCorreo(u.getCorreo());
+                        dto.setTelefono(u.getTelefono());
+                        dto.setPassword(null);
+                        dto.setRoleId(u.getRole() != null ? u.getRole().getId() : null);
+                        return ResponseEntity.ok(dto);
+                    }
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

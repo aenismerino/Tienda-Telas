@@ -1,4 +1,4 @@
-package com.tienda.pedido.model;
+package com.tienda.carrito.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,14 +15,9 @@ public class CarritoItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer usuarioId;   
+    private String usuarioId;   
     private Integer productoId;  
     private Integer cantidad;    
     private Integer precioUnitario; 
     private Boolean seleccionado;
-
-    @jakarta.persistence.ManyToOne
-    @jakarta.persistence.JoinColumn(name = "pedido_id")
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private Pedido pedido;
 }
