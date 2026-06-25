@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="system">
+        <createTable tableName="notificaciones">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mensaje" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="destinatario" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="fecha" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="system">
+        <insert tableName="notificaciones"><column name="mensaje" value="Tu pedido ha sido confirmado"/><column name="destinatario" value="cliente1@gmail.com"/><column name="estado" value="ENVIADA"/></insert>
+        <insert tableName="notificaciones"><column name="mensaje" value="Tu pago ha sido rechazado, intenta de nuevo"/><column name="destinatario" value="cliente2@gmail.com"/><column name="estado" value="PENDIENTE"/></insert>
+        <insert tableName="notificaciones"><column name="mensaje" value="¡Gracias por tu compra!"/><column name="destinatario" value="cliente3@yahoo.com"/><column name="estado" value="ENVIADA"/></insert>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="system">
+        <createTable tableName="tickets">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="asunto" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="VARCHAR(1000)"/>
+            <column name="estado" type="VARCHAR(50)"/>
+            <column name="fecha" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="system">
+        <insert tableName="tickets"><column name="asunto" value="Problema con mi pedido"/><column name="descripcion" value="El pedido #1234 no ha llegado a mi domicilio"/><column name="estado" value="ABIERTO"/></insert>
+        <insert tableName="tickets"><column name="asunto" value="Duda sobre envíos"/><column name="descripcion" value="Quisiera saber cuánto tarda el envío a regiones"/><column name="estado" value="RESUELTO"/></insert>
+        <insert tableName="tickets"><column name="asunto" value="Error al pagar"/><column name="descripcion" value="Mi tarjeta es rechazada repetidas veces"/><column name="estado" value="EN_PROGRESO"/></insert>
+    </changeSet>
+
+</databaseChangeLog>
