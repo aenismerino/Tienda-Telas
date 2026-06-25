@@ -10,6 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.util.stream.Collectors;
 import java.util.List;
 
 @Slf4j
@@ -21,16 +27,28 @@ public class ShipmentController {
     private ShipmentService shipmentService;
 
     @GetMapping
-    public ResponseEntity<List<Shipment>> listarEnvios() {
+    public ResponseEntity<CollectionModel<EntityModel<Shipment>>> listarEnvios() {
         log.info("Consultando la lista completa de envios");
-        return ResponseEntity.ok(shipmentService.obtenerTodos());
+        List<EntityModel<Shipment>> envios = shipmentService.obtenerTodos().stream()
+                .map(envio -> EntityModel.of(envio,
+                        linkTo(methodOn(ShipmentController.class).obtenerEnvio(envio.getId())).withSelfRel(),
+                        linkTo(methodOn(ShipmentController.class).listarEnvios()).withRel("envios")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(CollectionModel.of(envios,
+                linkTo(methodOn(ShipmentController.class).listarEnvios()).withSelfRel()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Shipment> obtenerEnvio(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Shipment>> obtenerEnvio(@PathVariable Long id) {
         log.info("Buscando detalles del envio: {}", id);
         return shipmentService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
+                .map(envio -> {
+                    EntityModel<Shipment> resource = EntityModel.of(envio,
+                            linkTo(methodOn(ShipmentController.class).obtenerEnvio(id)).withSelfRel(),
+                            linkTo(methodOn(ShipmentController.class).listarEnvios()).withRel("envios"));
+                    return ResponseEntity.ok(resource);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -73,9 +91,16 @@ public class ShipmentController {
     }
 
     @GetMapping("/buscar-rut/{rut}")
-    public ResponseEntity<List<Shipment>> buscarPorRut(@PathVariable String rut) {
+    public ResponseEntity<CollectionModel<EntityModel<Shipment>>> buscarPorRut(@PathVariable String rut) {
         log.info("Buscando envios para el RUT: {}", rut);
-        return ResponseEntity.ok(shipmentService.buscarPorRut(rut));
+        List<EntityModel<Shipment>> envios = shipmentService.buscarPorRut(rut).stream()
+                .map(envio -> EntityModel.of(envio,
+                        linkTo(methodOn(ShipmentController.class).obtenerEnvio(envio.getId())).withSelfRel(),
+                        linkTo(methodOn(ShipmentController.class).buscarPorRut(rut)).withRel("busqueda-rut")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(CollectionModel.of(envios,
+                linkTo(methodOn(ShipmentController.class).buscarPorRut(rut)).withSelfRel()));
     }
 
 

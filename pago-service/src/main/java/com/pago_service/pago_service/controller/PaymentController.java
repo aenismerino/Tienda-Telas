@@ -9,6 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.util.stream.Collectors;
 import java.util.List;
 
 @Slf4j
@@ -20,9 +26,16 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @GetMapping
-    public ResponseEntity<List<Payment>> listarPagos() {
+    public ResponseEntity<CollectionModel<EntityModel<Payment>>> listarPagos() {
         log.info("Accediendo al historial de pagos");
-        return ResponseEntity.ok(paymentService.obtenerTodos());
+        List<EntityModel<Payment>> pagos = paymentService.obtenerTodos().stream()
+                .map(pago -> EntityModel.of(pago,
+                        linkTo(methodOn(PaymentController.class).obtenerPorId(pago.getId())).withSelfRel(),
+                        linkTo(methodOn(PaymentController.class).listarPagos()).withRel("pagos")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(CollectionModel.of(pagos,
+                linkTo(methodOn(PaymentController.class).listarPagos()).withSelfRel()));
     }
 
     @PostMapping
@@ -34,10 +47,15 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Payment> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Payment>> obtenerPorId(@PathVariable Long id) {
         log.info("Buscando pago con ID: {}", id);
         return paymentService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
+                .map(pago -> {
+                    EntityModel<Payment> resource = EntityModel.of(pago,
+                            linkTo(methodOn(PaymentController.class).obtenerPorId(id)).withSelfRel(),
+                            linkTo(methodOn(PaymentController.class).listarPagos()).withRel("pagos"));
+                    return ResponseEntity.ok(resource);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

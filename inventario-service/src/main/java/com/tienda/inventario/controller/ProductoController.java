@@ -15,6 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tienda.inventario.dto.ProductoDTO;
 import com.tienda.inventario.service.ProductoService;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.util.stream.Collectors;
+import java.util.List;
+
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
@@ -23,13 +31,21 @@ public class ProductoController {
 
     
     @GetMapping
-    public List<ProductoDTO> listar() {
-        return productoService.listarTodo();
+    public CollectionModel<EntityModel<ProductoDTO>> listar() {
+        List<EntityModel<ProductoDTO>> productos = productoService.listarTodo().stream()
+                .map(producto -> EntityModel.of(producto,
+                        linkTo(methodOn(ProductoController.class).buscarPorId(producto.getId())).withSelfRel(),
+                        linkTo(methodOn(ProductoController.class).listar()).withRel("productos")))
+                .collect(Collectors.toList());
+        return CollectionModel.of(productos, linkTo(methodOn(ProductoController.class).listar()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public ProductoDTO buscarPorId(@PathVariable Integer id) {
-        return productoService.buscarPorId(id);
+    public EntityModel<ProductoDTO> buscarPorId(@PathVariable Integer id) {
+        ProductoDTO producto = productoService.buscarPorId(id);
+        return EntityModel.of(producto,
+                linkTo(methodOn(ProductoController.class).buscarPorId(id)).withSelfRel(),
+                linkTo(methodOn(ProductoController.class).listar()).withRel("productos"));
     }
 
     @PostMapping
