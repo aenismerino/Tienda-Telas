@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0-notificaciones-init
+      author: universidad
+      changes:
+        - empty: {}

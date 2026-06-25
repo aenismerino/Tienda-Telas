@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  notificaciones:
+    build:
+      context: ./notificaciones
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+    networks:
+      - tienda-network
+
+networks:
+  tienda-network:
+    driver: bridge
