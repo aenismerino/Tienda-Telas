@@ -1,9 +1,5 @@
 # Guía de APIs y CRUDs para Postman
 
-Agregar ModHeader al navegador para mostrar la interfaz del Swagger
-Authorization   Bearer (Token entregado por el Postman al momento de hacer el login)
-
-
 Esta guía detalla cómo probar todos los endpoints (CRUDs) de tus microservicios utilizando **Postman** a través del **API Gateway** (que corre en el puerto `8080`).
 
 ---

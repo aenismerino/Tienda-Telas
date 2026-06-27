@@ -19,14 +19,6 @@ import com.tienda.pedido.service.PedidoService;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import java.util.stream.Collectors;
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/pedidos")
@@ -35,24 +27,15 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @GetMapping
-    public CollectionModel<EntityModel<PedidoDTO>> listar() {
+    public List<PedidoDTO> listar() {
         log.info("Listando todos los pedidos");
-        List<EntityModel<PedidoDTO>> pedidos = pedidoService.listarTodo().stream()
-                .map(pedido -> EntityModel.of(pedido,
-                        linkTo(methodOn(PedidoController.class).buscarPorId(pedido.getId())).withSelfRel(),
-                        linkTo(methodOn(PedidoController.class).listar()).withRel("pedidos")))
-                .collect(Collectors.toList());
-        return CollectionModel.of(pedidos, linkTo(methodOn(PedidoController.class).listar()).withSelfRel());
+        return pedidoService.listarTodo();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<PedidoDTO>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<PedidoDTO> buscarPorId(@PathVariable Integer id) {
         try {
-            PedidoDTO pedido = pedidoService.buscarPorId(id);
-            EntityModel<PedidoDTO> resource = EntityModel.of(pedido,
-                    linkTo(methodOn(PedidoController.class).buscarPorId(id)).withSelfRel(),
-                    linkTo(methodOn(PedidoController.class).listar()).withRel("pedidos"));
-            return ResponseEntity.ok(resource);
+            return ResponseEntity.ok(pedidoService.buscarPorId(id));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

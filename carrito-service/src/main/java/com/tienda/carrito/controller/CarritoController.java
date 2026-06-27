@@ -17,11 +17,6 @@ import com.tienda.carrito.dto.CarritoItemDTO;
 import com.tienda.carrito.dto.CarritoResponseDTO;
 import com.tienda.carrito.service.CarritoService;
 
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @RestController
 @RequestMapping("/carrito")
 public class CarritoController {
@@ -29,11 +24,8 @@ public class CarritoController {
     private CarritoService carritoService;
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<EntityModel<CarritoResponseDTO>> obtenerCarrito(@PathVariable String usuarioId) {
-        CarritoResponseDTO carrito = carritoService.obtenerCarritoPorUsuario(usuarioId);
-        EntityModel<CarritoResponseDTO> resource = EntityModel.of(carrito,
-                linkTo(methodOn(CarritoController.class).obtenerCarrito(usuarioId)).withSelfRel());
-        return ResponseEntity.ok(resource);
+    public ResponseEntity<CarritoResponseDTO> obtenerCarrito(@PathVariable String usuarioId) {
+        return ResponseEntity.ok(carritoService.obtenerCarritoPorUsuario(usuarioId));
     }
 
     @PostMapping("/agregar")

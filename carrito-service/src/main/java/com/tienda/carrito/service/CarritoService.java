@@ -35,18 +35,10 @@ public class CarritoService {
                 .map(this::convertirADto)
                 .toList();
         
-        int iva = (int) (totalPagar * 0.19);
-        int descuento = 0;
-        if (totalPagar > 50000) {
-            descuento = (int) (totalPagar * 0.10);
-        }
-
         CarritoResponseDTO respuesta = new CarritoResponseDTO();
         respuesta.setItems(itemsDto);
         respuesta.setTotalCarrito(totalCarrito);
-        respuesta.setIva(iva);
-        respuesta.setDescuento(descuento);
-        respuesta.setTotalPagar(totalPagar + iva - descuento);
+        respuesta.setTotalPagar(totalPagar);
         
         return respuesta;
     }

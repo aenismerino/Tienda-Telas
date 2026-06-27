@@ -28,34 +28,7 @@ public class AuthService {
         return  userRepository.findById(rut);
     }
 
-    private boolean validarRut(String rut) {
-        if (rut == null || !rut.matches("^[0-9]+-[0-9kK]{1}$")) return false;
-        String[] partes = rut.split("-");
-        String rutNumeros = partes[0];
-        String dv = partes[1].toUpperCase();
-        
-        int suma = 0;
-        int multiplicador = 2;
-        for (int i = rutNumeros.length() - 1; i >= 0; i--) {
-            suma += Character.getNumericValue(rutNumeros.charAt(i)) * multiplicador;
-            multiplicador = multiplicador == 7 ? 2 : multiplicador + 1;
-        }
-        
-        int resto = suma % 11;
-        int dvCalculado = 11 - resto;
-        String dvEsperado;
-        if (dvCalculado == 11) dvEsperado = "0";
-        else if (dvCalculado == 10) dvEsperado = "K";
-        else dvEsperado = String.valueOf(dvCalculado);
-        
-        return dv.equals(dvEsperado);
-    }
-
     public User registrarUsuario(UserDTO dto) {
-        if (!validarRut(dto.getRut())) {
-            throw new RuntimeException("El RUT ingresado no es valido");
-        }
-
         Role role = roleRepository.findById(dto.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 

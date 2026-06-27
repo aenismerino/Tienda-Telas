@@ -10,12 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -54,14 +48,9 @@ public class AuthController {
         List<User> users = authService.obtenerUsuarios();
 
         if (role.equals("ROLE_ADMIN")) {
-            List<EntityModel<User>> userModels = users.stream()
-                    .map(u -> EntityModel.of(u,
-                            linkTo(methodOn(AuthController.class).obtenerUsuarioPorRut(u.getRut())).withSelfRel(),
-                            linkTo(methodOn(AuthController.class).listarUsuarios()).withRel("users")))
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(CollectionModel.of(userModels, linkTo(methodOn(AuthController.class).listarUsuarios()).withSelfRel()));
+            return ResponseEntity.ok(users);
         } else if (role.equals("ROLE_VENDEDOR")) {
-            List<EntityModel<UserDTO>> dtoList = users.stream().map(u -> {
+            List<UserDTO> dtoList = users.stream().map(u -> {
                 UserDTO dto = new UserDTO();
                 dto.setRut(u.getRut());
                 dto.setNombres(u.getNombres());
@@ -70,11 +59,9 @@ public class AuthController {
                 dto.setTelefono(u.getTelefono());
                 dto.setPassword(null); // Ocultar contraseña
                 dto.setRoleId(u.getRole() != null ? u.getRole().getId() : null);
-                return EntityModel.of(dto,
-                        linkTo(methodOn(AuthController.class).obtenerUsuarioPorRut(dto.getRut())).withSelfRel(),
-                        linkTo(methodOn(AuthController.class).listarUsuarios()).withRel("users"));
+                return dto;
             }).toList();
-            return ResponseEntity.ok(CollectionModel.of(dtoList, linkTo(methodOn(AuthController.class).listarUsuarios()).withSelfRel()));
+            return ResponseEntity.ok(dtoList);
         }
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -93,9 +80,7 @@ public class AuthController {
         return authService.buscarPorRut(rut)
                 .map(u -> {
                     if (role.equals("ROLE_ADMIN")) {
-                        return ResponseEntity.ok(EntityModel.of(u,
-                                linkTo(methodOn(AuthController.class).obtenerUsuarioPorRut(rut)).withSelfRel(),
-                                linkTo(methodOn(AuthController.class).listarUsuarios()).withRel("users")));
+                        return ResponseEntity.ok(u);
                     } else {
                         UserDTO dto = new UserDTO();
                         dto.setRut(u.getRut());
@@ -105,9 +90,7 @@ public class AuthController {
                         dto.setTelefono(u.getTelefono());
                         dto.setPassword(null);
                         dto.setRoleId(u.getRole() != null ? u.getRole().getId() : null);
-                        return ResponseEntity.ok(EntityModel.of(dto,
-                                linkTo(methodOn(AuthController.class).obtenerUsuarioPorRut(rut)).withSelfRel(),
-                                linkTo(methodOn(AuthController.class).listarUsuarios()).withRel("users")));
+                        return ResponseEntity.ok(dto);
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());
