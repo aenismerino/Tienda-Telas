@@ -1,8 +1,15 @@
 x-common-env: &common-env
   SECRET: "esta_es_mi_compleja_clave_secreta"
-  DB_HOST: "host.docker.internal"
+  DB_HOST: "mysql"
 
 services:
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
 
   api-gateway:
     build: ./api-gateway
@@ -27,6 +34,8 @@ services:
       - pedidos
       - notificaciones-service
       - support-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   auth-service:
     build: ./auth-service
@@ -34,6 +43,8 @@ services:
       - "8081:8081"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   envio-service:
     build: ./envio-service
@@ -41,6 +52,8 @@ services:
       - "8082:8082"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   inventario:
     build: ./inventario-service
@@ -48,6 +61,8 @@ services:
       - "8083:8083"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   pago-service:
     build: ./pago-service
@@ -55,6 +70,8 @@ services:
       - "8084:8084"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   pedidos:
     build: ./pedido-service
@@ -62,6 +79,8 @@ services:
       - "8085:8085"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   carrito:
     build: ./carrito-service
@@ -69,6 +88,8 @@ services:
       - "8086:8086"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   notificaciones-service:
     build: ./notificaciones-service
@@ -76,6 +97,8 @@ services:
       - "8087:8087"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   support-service:
     build: ./support-service
@@ -83,3 +106,5 @@ services:
       - "8088:8088"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
