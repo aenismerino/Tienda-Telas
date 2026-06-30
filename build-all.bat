@@ -23,3 +23,9 @@ call .\mvnw clean package -DskipTests
 
 cd ../pedido-service
 call .\mvnw clean package -DskipTests
+
+cd ../notificaciones-service
+call .\mvnw clean package -DskipTests
+
+cd ../support-service
+call .\mvnw clean package -DskipTests

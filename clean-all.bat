@@ -18,3 +18,9 @@ call .\mvnw clean
 
 cd ../pedido-service
 call .\mvnw clean
+
+cd ../notificaciones-service
+call .\mvnw clean
+
+cd ../support-service
+call .\mvnw clean

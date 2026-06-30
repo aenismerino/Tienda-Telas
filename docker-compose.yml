@@ -1,11 +1,19 @@
 x-common-env: &common-env
   SECRET: "esta_es_mi_compleja_clave_secreta"
-  DB_HOST: "host.docker.internal"
+  DB_HOST: "mysql"
 
 services:
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
 
   api-gateway:
     build: ./api-gateway
+    restart: on-failure
     ports:
       - "8080:8080"
     environment:
@@ -16,6 +24,8 @@ services:
       PAGO_URI: http://pago-service:8084
       PEDIDOS_URI: http://pedidos:8085
       CARRITO_URI: http://carrito:8086
+      NOTIFICACIONES_URI: http://notificaciones-service:8087
+      SUPPORT_URI: http://support-service:8088
     depends_on:
       - auth-service
       - carrito
@@ -23,45 +33,87 @@ services:
       - inventario
       - pago-service
       - pedidos
+      - notificaciones-service
+      - support-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   auth-service:
     build: ./auth-service
+    restart: on-failure
     ports:
       - "8081:8081"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   envio-service:
     build: ./envio-service
+    restart: on-failure
     ports:
       - "8082:8082"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   inventario:
     build: ./inventario-service
+    restart: on-failure
     ports:
       - "8083:8083"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   pago-service:
     build: ./pago-service
+    restart: on-failure
     ports:
       - "8084:8084"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   pedidos:
     build: ./pedido-service
+    restart: on-failure
     ports:
       - "8085:8085"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   carrito:
     build: ./carrito-service
+    restart: on-failure
     ports:
       - "8086:8086"
     environment:
       <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  notificaciones-service:
+    build: ./notificaciones-service
+    restart: on-failure
+    ports:
+      - "8087:8087"
+    environment:
+      <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  support-service:
+    build: ./support-service
+    restart: on-failure
+    ports:
+      - "8088:8088"
+    environment:
+      <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

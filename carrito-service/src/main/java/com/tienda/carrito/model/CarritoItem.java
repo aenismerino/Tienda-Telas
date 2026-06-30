@@ -19,5 +19,6 @@ public class CarritoItem {
     private Integer productoId;  
     private Integer cantidad;    
     private Integer precioUnitario; 
+    @jakarta.persistence.Column(columnDefinition = "TINYINT")
     private Boolean seleccionado;
 }
