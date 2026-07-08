@@ -3,6 +3,7 @@ package com.envio_service.envio_service.service;
 import com.envio_service.envio_service.DTO.*;
 import com.envio_service.envio_service.model.*;
 import com.envio_service.envio_service.repository.ShipmentRepository;
+import com.envio_service.envio_service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +26,7 @@ public class ShipmentService {
     }
 
     public Shipment crearEnvio(ShipmentDTO dto) {
-        Shipment envio = new  Shipment();
-        envio.setOrderId(dto.getOrderId());
-        envio.setDireccionDestino(dto.getDireccionDestino());
+        Shipment envio = dto.toModel();
         envio.setEstadoActual("PREPARANDO PAQUETE");
 
         TrackingHistory primerPaso = new TrackingHistory();
@@ -42,7 +41,7 @@ public class ShipmentService {
 
     public Shipment agregarHistorial(Long shipmentId, TrackingDTO trackingDTO) {
         Shipment envio = shipmentRepository.findById(shipmentId)
-                .orElseThrow(() -> new RuntimeException("Envio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Envío no encontrado con ID: " + shipmentId));
 
         envio.setEstadoActual(trackingDTO.getNuevaDescripcion());
 
@@ -58,7 +57,7 @@ public class ShipmentService {
 
     public void eliminar(Long id) {
         if (!shipmentRepository.existsById(id)) {
-            throw new RuntimeException("Envio no encontrado");
+            throw new ResourceNotFoundException("Envío no encontrado con ID: " + id);
         }
         shipmentRepository.deleteById(id);
     }
@@ -72,10 +71,8 @@ public class ShipmentService {
     }
 
     public List<Shipment> buscarPorRut(String rut) {
-        // En una app real usariamos un metodo en el repositorio findByRutCliente
         return shipmentRepository.findAll().stream()
-                .filter(s -> s.getDireccionDestino() != null) // Filtro simulado
+                .filter(s -> s.getDireccionDestino() != null)
                 .collect(java.util.stream.Collectors.toList());
     }
-
 }

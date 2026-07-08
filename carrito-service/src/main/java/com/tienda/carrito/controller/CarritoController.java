@@ -29,7 +29,7 @@ public class CarritoController {
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<CarritoItemDTO> agregarAlCarrito(@RequestBody CarritoItemDTO dto) {
+    public ResponseEntity<CarritoItemDTO> agregarAlCarrito(@jakarta.validation.Valid @RequestBody CarritoItemDTO dto) {
         return ResponseEntity.ok(carritoService.agregarProducto(dto));
     }
 

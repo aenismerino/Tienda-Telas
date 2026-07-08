@@ -4,6 +4,7 @@ import com.pago_service.pago_service.model.OrderClient;
 import com.pago_service.pago_service.DTO.PaymentDTO;
 import com.pago_service.pago_service.model.Payment;
 import com.pago_service.pago_service.repository.PaymentsRepository;
+import com.pago_service.pago_service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,7 @@ public class PaymentService {
     }
 
     public Payment procesarPago(PaymentDTO dto) {
-        Payment pago = new Payment();
-        pago.setOrderId(dto.getOrderId());
-        pago.setMonto(dto.getMonto());
+        Payment pago = dto.toModel();
         pago.setEstado("APROBADO");
         pago.setFechaPago(LocalDateTime.now());
 
@@ -34,7 +33,7 @@ public class PaymentService {
 
         try {
             orderClient.actualizarEstadoPedido(pagoGuardado.getOrderId(), "PAGADO");
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             System.err.println("Error al notificar al order-service: " + e.getMessage());
         }
 
@@ -47,7 +46,7 @@ public class PaymentService {
 
     public Payment actualizar(Long id, PaymentDTO dto) {
         Payment pago = paymentsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con ID: " + id));
         pago.setOrderId(dto.getOrderId());
         pago.setMonto(dto.getMonto());
         return paymentsRepository.save(pago);
@@ -55,9 +54,8 @@ public class PaymentService {
 
     public void eliminar(Long id) {
         if (!paymentsRepository.existsById(id)) {
-            throw new RuntimeException("Pago no encontrado");
+            throw new ResourceNotFoundException("Pago no encontrado con ID: " + id);
         }
         paymentsRepository.deleteById(id);
     }
-
 }

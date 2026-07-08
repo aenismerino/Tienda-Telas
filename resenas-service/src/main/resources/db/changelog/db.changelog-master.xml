@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="joako">
+        <createTable tableName="resenas">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tela_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usuario_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="calificacion" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comentario" type="VARCHAR(300)"/>
+            <column name="fecha_creacion" type="DATE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="joako">
+        <insert tableName="resenas"><column name="tela_id" value="1"/><column name="usuario_id" value="1"/><column name="calificacion" value="5"/><column name="comentario" value="¡La seda natural es increíble! Muy suave y de excelente calidad."/><column name="fecha_creacion" value="2023-10-01"/></insert>
+        <insert tableName="resenas"><column name="tela_id" value="2"/><column name="usuario_id" value="1"/><column name="calificacion" value="4"/><column name="comentario" value="El algodón orgánico es muy bueno, aunque un poco delgado para lo que buscaba."/><column name="fecha_creacion" value="2023-10-02"/></insert>
+        <insert tableName="resenas"><column name="tela_id" value="3"/><column name="usuario_id" value="2"/><column name="calificacion" value="5"/><column name="comentario" value="El lino italiano es perfecto para los vestidos de verano, lo recomiendo 100%."/><column name="fecha_creacion" value="2023-10-05"/></insert>
+        <insert tableName="resenas"><column name="tela_id" value="1"/><column name="usuario_id" value="3"/><column name="calificacion" value="3"/><column name="comentario" value="La seda es buena, pero el color es ligeramente distinto al de la foto."/><column name="fecha_creacion" value="2023-10-10"/></insert>
+        <insert tableName="resenas"><column name="tela_id" value="10"/><column name="usuario_id" value="2"/><column name="calificacion" value="5"/><column name="comentario" value="Compré el tul transparente para una decoración y cumplió perfectamente su propósito."/><column name="fecha_creacion" value="2023-10-12"/></insert>
+    </changeSet>
+
+</databaseChangeLog>

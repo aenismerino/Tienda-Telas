@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -20,48 +22,42 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @GetMapping
-    public ResponseEntity<List<Payment>> listarPagos() {
-        log.info("Accediendo al historial de pagos");
-        return ResponseEntity.ok(paymentService.obtenerTodos());
+    public ResponseEntity<List<PaymentDTO>> listarPagos() {
+        log.info("Accediendo al historial de pagos (V1)");
+        List<PaymentDTO> pagos = paymentService.obtenerTodos().stream()
+                .map(PaymentDTO::fromModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(pagos);
     }
 
     @PostMapping
-    public ResponseEntity<Payment> registrarPago(@RequestBody PaymentDTO paymentDTO) {
+    public ResponseEntity<PaymentDTO> registrarPago(@Valid @RequestBody PaymentDTO paymentDTO) {
         log.info("Procesando pago para la orden: {}", paymentDTO.getOrderId());
         Payment nuevoPago = paymentService.procesarPago(paymentDTO);
         log.info("Pago: {} aprobado exitosamente", nuevoPago.getId());
-        return new ResponseEntity<>(nuevoPago, HttpStatus.CREATED);
+        return new ResponseEntity<>(PaymentDTO.fromModel(nuevoPago), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Payment> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<PaymentDTO> obtenerPorId(@PathVariable Long id) {
         log.info("Buscando pago con ID: {}", id);
         return paymentService.obtenerPorId(id)
+                .map(PaymentDTO::fromModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Payment> actualizarPago(@PathVariable Long id, @RequestBody PaymentDTO paymentDTO) {
+    public ResponseEntity<PaymentDTO> actualizarPago(@PathVariable Long id, @Valid @RequestBody PaymentDTO paymentDTO) {
         log.info("Actualizando pago con ID: {}", id);
-        try {
-            return ResponseEntity.ok(paymentService.actualizar(id, paymentDTO));
-        } catch (RuntimeException e) {
-            log.error("Error al actualizar pago: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
+        Payment actualizado = paymentService.actualizar(id, paymentDTO);
+        return ResponseEntity.ok(PaymentDTO.fromModel(actualizado));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPago(@PathVariable Long id) {
         log.info("Eliminando pago con ID: {}", id);
-        try {
-            paymentService.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            log.error("Error al eliminar pago: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
+        paymentService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
-
 }

@@ -10,7 +10,6 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
 
-
   api-gateway:
     build: ./api-gateway
     restart: on-failure
@@ -26,6 +25,8 @@ services:
       CARRITO_URI: http://carrito:8086
       NOTIFICACIONES_URI: http://notificaciones-service:8087
       SUPPORT_URI: http://support-service:8088
+      RESENAS_URI: http://resenas-service:8089
+      CATALOGO_URI: http://catalogo-service:8090
     depends_on:
       - auth-service
       - carrito
@@ -35,6 +36,8 @@ services:
       - pedidos
       - notificaciones-service
       - support-service
+      - resenas-service
+      - catalogo-service
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -113,6 +116,26 @@ services:
     restart: on-failure
     ports:
       - "8088:8088"
+    environment:
+      <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  resenas-service:
+    build: ./resenas-service
+    restart: on-failure
+    ports:
+      - "8089:8089"
+    environment:
+      <<: *common-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  catalogo-service:
+    build: ./catalogo-service
+    restart: on-failure
+    ports:
+      - "8090:8090"
     environment:
       <<: *common-env
     extra_hosts:

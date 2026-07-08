@@ -1,21 +1,17 @@
 package com.tienda.pedido.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tienda.pedido.dto.PedidoDTO;
 import com.tienda.pedido.service.PedidoService;
+import com.tienda.pedido.model.Pedido;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,51 +19,53 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
+
     @Autowired
     private PedidoService pedidoService;
 
     @GetMapping
-    public List<PedidoDTO> listar() {
+    public ResponseEntity<List<PedidoDTO>> listar() {
         log.info("Listando todos los pedidos");
-        return pedidoService.listarTodo();
+        List<PedidoDTO> pedidos = pedidoService.listarTodo().stream()
+                .map(PedidoDTO::fromModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(pedidos);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoDTO> buscarPorId(@PathVariable Integer id) {
-        try {
-            return ResponseEntity.ok(pedidoService.buscarPorId(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        log.info("Buscando pedido con ID: {}", id);
+        return pedidoService.buscarPorId(id)
+                .map(PedidoDTO::fromModel)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/crear")
-    public PedidoDTO crear(@RequestBody PedidoDTO dto) {
-        return pedidoService.guardar(dto);
+    public ResponseEntity<PedidoDTO> crear(@Valid @RequestBody PedidoDTO dto) {
+        log.info("Creando pedido de producto ID: {}", dto.getProductoId());
+        Pedido creado = pedidoService.guardar(dto);
+        return new ResponseEntity<>(PedidoDTO.fromModel(creado), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody PedidoDTO dto) {
-        try {
-            return ResponseEntity.ok(pedidoService.actualizar(id, dto));
-        } catch (RuntimeException e) {
-            if (e.getMessage().equals("Pedido no encontrado")) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<PedidoDTO> actualizar(@PathVariable Integer id, @Valid @RequestBody PedidoDTO dto) {
+        log.info("Actualizando pedido con ID: {}", id);
+        Pedido actualizado = pedidoService.actualizar(id, dto);
+        return ResponseEntity.ok(PedidoDTO.fromModel(actualizado));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+        log.info("Eliminando pedido con ID: {}", id);
         pedidoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/estado")
-    public ResponseEntity<Void> actualizarEstadoPedido(@PathVariable Integer id, @RequestParam("estado") String estado) {
-        // En una app real actualizariamos el estado en el servicio
-        System.out.println("Actualizando estado de pedido " + id + " a " + estado);
+    public ResponseEntity<Void> actualizarEstadoPedido(@PathVariable Integer id,
+            @RequestParam("estado") String estado) {
+        log.info("Actualizando estado de pedido {} a {}", id, estado);
         return ResponseEntity.ok().build();
     }
 
@@ -80,11 +78,10 @@ public class PedidoController {
     public ResponseEntity<List<PedidoDTO>> buscarPorFecha(
             @RequestParam("inicio") @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime inicio,
             @RequestParam("fin") @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fin) {
-        return ResponseEntity.ok(pedidoService.buscarPorFecha(inicio, fin));
-    }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+        List<PedidoDTO> pedidos = pedidoService.buscarPorFecha(inicio, fin).stream()
+                .map(PedidoDTO::fromModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(pedidos);
     }
 }

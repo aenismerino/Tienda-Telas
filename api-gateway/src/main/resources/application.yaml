@@ -81,6 +81,20 @@ spring:
               filters:
                 - StripPrefix=1
 
+            - id: resenas-service
+              uri: ${RESENAS_URI:http://localhost:8089}
+              predicates:
+                - Path=/api/resenas/**
+              filters:
+                - StripPrefix=1
+                
+            - id: catalogo-service
+              uri: ${CATALOGO_URI:http://localhost:8090}
+              predicates:
+                - Path=/api/catalogo/**
+              filters:
+                - StripPrefix=1
+
 eureka:
   client:
     register-with-eureka: false

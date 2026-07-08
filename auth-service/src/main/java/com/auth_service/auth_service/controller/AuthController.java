@@ -3,13 +3,15 @@ package com.auth_service.auth_service.controller;
 import com.auth_service.auth_service.DTO.UserDTO;
 import com.auth_service.auth_service.model.User;
 import com.auth_service.auth_service.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -28,7 +30,7 @@ public class AuthController {
         String password = credentials.get("password");
 
         log.info("Intento de login para RUT: {}", rut);
-        
+
         return authService.buscarPorRut(rut)
                 .filter(u -> u.getPassword().equals(password))
                 .map(u -> ResponseEntity.ok(jwtUtil.generateToken(u.getRut(), u.getRole().getNombre())))
@@ -36,8 +38,9 @@ public class AuthController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<?> listarUsuarios(){
-        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<?> listarUsuarios() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
         String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
 
         if (role.equals("ROLE_COMPRADOR")) {
@@ -50,26 +53,16 @@ public class AuthController {
         if (role.equals("ROLE_ADMIN")) {
             return ResponseEntity.ok(users);
         } else if (role.equals("ROLE_VENDEDOR")) {
-            List<UserDTO> dtoList = users.stream().map(u -> {
-                UserDTO dto = new UserDTO();
-                dto.setRut(u.getRut());
-                dto.setNombres(u.getNombres());
-                dto.setApellidos(u.getApellidos());
-                dto.setCorreo(u.getCorreo());
-                dto.setTelefono(u.getTelefono());
-                dto.setPassword(null); // Ocultar contraseña
-                dto.setRoleId(u.getRole() != null ? u.getRole().getId() : null);
-                return dto;
-            }).toList();
+            List<UserDTO> dtoList = users.stream().map(UserDTO::fromModel).collect(Collectors.toList());
             return ResponseEntity.ok(dtoList);
         }
-
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/users/{rut}")
-    public ResponseEntity<?> obtenerUsuarioPorRut(@PathVariable String rut){
-        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<?> obtenerUsuarioPorRut(@PathVariable String rut) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
         String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
 
         if (role.equals("ROLE_COMPRADOR")) {
@@ -82,53 +75,32 @@ public class AuthController {
                     if (role.equals("ROLE_ADMIN")) {
                         return ResponseEntity.ok(u);
                     } else {
-                        UserDTO dto = new UserDTO();
-                        dto.setRut(u.getRut());
-                        dto.setNombres(u.getNombres());
-                        dto.setApellidos(u.getApellidos());
-                        dto.setCorreo(u.getCorreo());
-                        dto.setTelefono(u.getTelefono());
-                        dto.setPassword(null);
-                        dto.setRoleId(u.getRole() != null ? u.getRole().getId() : null);
-                        return ResponseEntity.ok(dto);
+                        return ResponseEntity.ok(UserDTO.fromModel(u));
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> registrarUsuario(@RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> registrarUsuario(@Valid @RequestBody UserDTO userDTO) {
         log.info("Iniciando el registro de usuario con RUT: {}", userDTO.getRut());
-        try {
-            User registrado = authService.registrarUsuario(userDTO);
-            log.info("Usuario registrado exitosamente con RUT: {}", registrado.getRut());
-            return new  ResponseEntity<>(registrado, HttpStatus.CREATED);
-        } catch ( RuntimeException e ){
-            log.error("Error al registrar usuario: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        User registrado = authService.registrarUsuario(userDTO);
+        log.info("Usuario registrado exitosamente con RUT: {}", registrado.getRut());
+        return new ResponseEntity<>(UserDTO.fromModel(registrado), HttpStatus.CREATED);
     }
 
     @PutMapping("/users/{rut}")
-    public ResponseEntity<User> actualizarUsuario(@PathVariable String rut, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> actualizarUsuario(@PathVariable String rut, @Valid @RequestBody UserDTO userDTO) {
         log.info("Actualizando usuario con RUT: {}", rut);
-        try {
-            return ResponseEntity.ok(authService.actualizarUsuario(rut, userDTO));
-        } catch (RuntimeException e) {
-            log.error("Error al actualizar usuario: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        User actualizado = authService.actualizarUsuario(rut, userDTO);
+        return ResponseEntity.ok(UserDTO.fromModel(actualizado));
     }
 
     @DeleteMapping("/users/{rut}")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable String rut) {
         log.info("Eliminando usuario con RUT: {}", rut);
-        try {
-            authService.eliminarUsuario(rut);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        authService.eliminarUsuario(rut);
+        return ResponseEntity.noContent().build();
     }
 
 }
