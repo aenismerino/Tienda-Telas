@@ -25,8 +25,8 @@ call .\mvnw clean
 cd ../support-service
 call .\mvnw clean
 
-cd ../support-service
+cd ../resenas-service
 call .\mvnw clean
 
-cd ../resenas-service
+cd ../catalogo-service
 call .\mvnw clean

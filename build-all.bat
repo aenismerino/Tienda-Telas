@@ -32,3 +32,6 @@ call .\mvnw clean package -DskipTests
 
 cd ../resenas-service
 call .\mvnw clean package -DskipTests
+
+cd ../catalogo-service
+call .\mvnw clean package -DskipTests
