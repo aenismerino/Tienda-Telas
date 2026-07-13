@@ -40,6 +40,8 @@ services:
       - catalogo-service
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   auth-service:
     build: ./auth-service
@@ -50,6 +52,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   envio-service:
     build: ./envio-service
@@ -60,6 +64,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   inventario:
     build: ./inventario-service
@@ -70,6 +76,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   pago-service:
     build: ./pago-service
@@ -80,6 +88,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   pedidos:
     build: ./pedido-service
@@ -90,6 +100,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   carrito:
     build: ./carrito-service
@@ -100,6 +112,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   notificaciones-service:
     build: ./notificaciones-service
@@ -110,6 +124,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   support-service:
     build: ./support-service
@@ -120,6 +136,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   resenas-service:
     build: ./resenas-service
@@ -130,6 +148,8 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
 
   catalogo-service:
     build: ./catalogo-service
@@ -140,3 +160,5 @@ services:
       <<: *common-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/logs
